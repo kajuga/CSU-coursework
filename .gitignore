@@ -1,4 +1,3 @@
-# Created by .ignore support plugin (hsz.mobi)
 # Created by https://www.gitignore.io/api/java,linux,java-web,intellij+all
 # Edit at https://www.gitignore.io/?templates=java,linux,java-web,intellij+all
 
@@ -133,4 +132,3 @@ target/
 .nfs*
 
 # End of https://www.gitignore.io/api/java,linux,java-web,intellij+all
-src/
