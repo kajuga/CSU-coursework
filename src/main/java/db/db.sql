@@ -1,11 +1,14 @@
 
+DROP TABLE inventory_category;
 DROP TABLE service_card;
 DROP TABLE client;
 DROP TABLE inventory;
+DROP TABLE category;
+
 
 
 CREATE TABLE client (
-    id SERIAL NOT NULL ,
+    id SERIAL PRIMARY KEY NOT NULL ,
     firstname VARCHAR(50) NOT NULL ,
     secondname VARCHAR(50) NOT NULL ,
     surname VARCHAR(50) NOT NULL ,
@@ -15,13 +18,13 @@ CREATE TABLE client (
 
 CREATE TABLE inventory
 (
-    id SERIAL NOT NULL ,
+    id SERIAL PRIMARY KEY NOT NULL ,
     name VARCHAR(50) NOT NULL ,
     price NUMERIC NOT NULL
 );
 CREATE TABLE category
 (
-    id SERIAL NOT NULL ,
+    id SERIAL PRIMARY KEY NOT NULL ,
     name VARCHAR(50) NOT NULL
 );
 
@@ -33,7 +36,7 @@ CREATE TABLE inventory_category
 
 CREATE TABLE service_card
 (
-    id SERIAL NOT NULL ,
+    id SERIAL PRIMARY KEY NOT NULL ,
     id_inventory INTEGER references inventory(id)  ,
     id_client INTEGER references client(id)  ,
     date_of_issue date NOT NULL ,
@@ -42,5 +45,38 @@ CREATE TABLE service_card
     date_of_entry date NOT NULL,
     CHECK (date_of_issue <= date_return)
 );
+
+
+INSERT INTO category (name) VALUES ('Металл'),('Атлетика'),('Бадминтон'), ('Футбол'), ('Баскетбол');
+INSERT INTO inventory (name, price) VALUES ('Гиря', 250.00), ('Штанга', 300.00), ('Ракетка', 450.00), ('Мяч', 150.00);
+INSERT INTO client (firstname, secondname, surname, phone_number) VALUES
+('Алексей', 'Иванович' , 'Петров', '89176756483'),
+('Иван', 'Семенович' , 'Сидоров', '89195357423'),
+('Петр', 'Владимирович' , 'Артемьев', '89155657483'),
+('Семен', 'Петрович' , 'Куренной', '89185554453'),
+('Георгий', 'Ольгович' , 'Федоров', '89135664323'),
+('Моня', 'Александровна' , 'Федорова', '89186655444');
+
+INSERT INTO service_card (id_inventory, id_client, date_of_issue, date_return, invested_funds, date_of_entry) VALUES
+(2, 3, '01/01/19', '04/01/19', 300.00, '01/01/19'),
+(3, 1, '12/02/19', '16/02/19', 450.00, '12/02/19'),
+(1, 2, '18/01/19', '22/01/19', 250.00, '18/01/19'),
+(4, 5, '27/01/19', '29/01/19', 150.00, '27/01/19'),
+(4, 4, '15/02/19', '25/02/19', 150.00, '15/02/19');
+
+-- тут я определяю роли инвентаря: например, гиря это категории металл и атлетика, штанга тоже, мяч - футбол и баскетбол.....?
+INSERT INTO inventory_category (id_inventory, id_category) VALUES
+(1,1),
+(1,2),
+(2,1),
+(2,2),
+(3,3),
+(4,4),
+(4,5);
+
+
+select * from service_card as sc
+    left join inventory_category as ic on sc.id_inventory = ic.id_inventory
+    left join category as c on c.id = ic.id_category
 
 
