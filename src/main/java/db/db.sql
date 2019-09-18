@@ -62,7 +62,10 @@ INSERT INTO service_card (id_inventory, id_client, date_of_issue, date_return, i
 (3, 1, '12/02/19', '16/02/19', 450.00, '12/02/19'),
 (1, 2, '18/01/19', '22/01/19', 250.00, '18/01/19'),
 (4, 5, '27/01/19', '29/01/19', 150.00, '27/01/19'),
-(4, 4, '15/02/19', '25/02/19', 150.00, '15/02/19');
+(4, 4, '15/02/19', '25/02/19', 150.00, '15/02/19'),
+(3, 5, '17/02/19', '18/02/19', 450.00, '17/02/19'),
+(2, 5, '18/02/19', '19/02/19', 300.00, '18/02/19');
+
 
 -- тут я определяю роли инвентаря: например, гиря это категории металл и атлетика, штанга тоже, мяч - футбол и баскетбол.....?
 INSERT INTO inventory_category (id_inventory, id_category) VALUES
@@ -74,9 +77,22 @@ INSERT INTO inventory_category (id_inventory, id_category) VALUES
 (4,4),
 (4,5);
 
+-- Найти человека,который имеет максимальную сумму оплат в категории, заданной пользователем.
 
-select * from service_card as sc
-    left join inventory_category as ic on sc.id_inventory = ic.id_inventory
-    left join category as c on c.id = ic.id_category
+select CONCAT(c.surname, ' ', c.secondname, ' ', c.firstname) as client, cat.name, SUM(sc.invested_funds)  from service_card as sc
+    left join client as c on sc.id_client = c.id
+    left join inventory_category as ic on ic.id_inventory = sc.id_inventory
+    left join category as cat on cat.id = ic.id_category
+WHERE cat.name = 'Атлетика'
+GROUP BY cat.id, c.id
+HAVING SUM(sc.invested_funds) = (select max(all_sum.sum)
+                                 from (
+                                          select SUM(sc.invested_funds) as sum
+                                          from service_card as sc
+                                                   left join client as c on sc.id_client = c.id
+                                                   left join inventory_category as ic on ic.id_inventory = sc.id_inventory
+                                                   left join category as cat on cat.id = ic.id_category
+                                          WHERE cat.name = 'Атлетика'
+                                          GROUP BY cat.id, c.id) as all_sum)
 
 
